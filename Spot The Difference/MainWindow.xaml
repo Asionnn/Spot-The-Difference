@@ -5,8 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Spot_The_Difference"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="1024" Width="1280">
     <Grid>
-        
+        <TextBlock x:Name="box1" HorizontalAlignment="Left" Height="300" Margin="276,156,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Background="Black" MouseDown="Box1_MouseDown"/>
+        <TextBlock x:Name="box2" HorizontalAlignment="Left" Height="300" Margin="738,156,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Background="Black" MouseDown="Box2_MouseDown"/>
+        <TextBlock x:Name="box3" HorizontalAlignment="Left" Height="300" Margin="276,552,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Background="Black" MouseDown="Box3_MouseDown"/>
+        <TextBlock x:Name="box4" HorizontalAlignment="Left" Height="300" Margin="738,552,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Background="Black" MouseDown="Box4_MouseDown"/>
     </Grid>
 </Window>
