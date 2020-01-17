@@ -11,5 +11,6 @@
         <TextBlock x:Name="box2" HorizontalAlignment="Left" Height="300" Margin="738,156,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Background="Black" MouseDown="Box2_MouseDown"/>
         <TextBlock x:Name="box3" HorizontalAlignment="Left" Height="300" Margin="276,552,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Background="Black" MouseDown="Box3_MouseDown"/>
         <TextBlock x:Name="box4" HorizontalAlignment="Left" Height="300" Margin="738,552,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Background="Black" MouseDown="Box4_MouseDown"/>
+        <TextBox x:Name="debug" HorizontalAlignment="Left" Height="65" TextWrapping="Wrap" VerticalAlignment="Top" Width="146" Margin="586,472,0,0" IsEnabled="False"/>
     </Grid>
 </Window>

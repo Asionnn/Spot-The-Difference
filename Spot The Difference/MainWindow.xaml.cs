@@ -43,37 +43,129 @@ namespace Spot_The_Difference
             Brushes.Navy,
             Brushes.Tan
         };
-        private int brushCount = brushes.Length;
+        //TODO: implement different matching
+        private enum matchType
+        {
+            color = 0,
+            word = 1,
+            circle = 2
+        };
+        private TextBlock[] boxes;
+        private int brushCount;
+        private int correctBox;
+        private int correctBoxColor;
+        private int wrongBoxesColor;
+        private int numRight;
+        private int numWrong;
+   
         private Random rand;
+
+
+
         public MainWindow()
         {
             InitializeComponent();
+            boxes = new TextBlock[]
+            {
+                box1,
+                box2,
+                box3,
+                box4
+            };
+            brushCount = brushes.Length;
+            numRight = 0;
+            numWrong = 0;
             rand = new Random();
+
+            randomizeBoxes();
+        }
+
+        private void randomizeBoxes()
+        {
+            correctBox = rand.Next(4);
+            correctBoxColor = rand.Next(brushCount); 
+
+            boxes[correctBox].Background = brushes[correctBoxColor];
+
+            while ((wrongBoxesColor = rand.Next(brushCount)) == correctBoxColor) ;
+
+            for (int x = 0; x < 4; x++)
+            {
+                if (correctBox != x)
+                {
+                    boxes[x].Background = brushes[wrongBoxesColor];
+                }
+            }
+        }
+
+        public void updateDebug()
+        {
+            debug.Text = "Right: " + numRight + "\n" + "Wrong: " + numWrong;
         }
 
         private void Box1_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            int num = rand.Next(brushCount);
-            box1.Background = brushes[num];
-            box2.Background = brushes[num];
-            box3.Background = brushes[num];
-            num = rand.Next(brushCount);
-            box4.Background = brushes[num];
+            if(correctBox == 0)
+            {
+                numRight++;
+            }
+            else
+            {
+                numWrong++;
+            }
+
+            randomizeBoxes();
+            updateDebug();
+            
+            
         }
 
         private void Box2_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            box2.Background = brushes[rand.Next(brushCount)];
+            if (correctBox == 1)
+            {
+                numRight++;
+            }
+            else
+            {
+                numWrong++;
+            }
+
+            randomizeBoxes();
+            updateDebug();
+
         }
 
         private void Box3_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            box3.Background = brushes[rand.Next(brushCount)];
+            if (correctBox == 2)
+            {
+                numRight++;
+            }
+            else
+            {
+                numWrong++;
+            }
+
+            randomizeBoxes();
+            updateDebug();
+
         }
 
         private void Box4_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            box4.Background = brushes[rand.Next(brushCount)];
+            if (correctBox == 3)
+            {
+                numRight++;
+            }
+            else
+            {
+                numWrong++;
+            }
+
+            randomizeBoxes();
+            updateDebug();
+
         }
     }
 }
