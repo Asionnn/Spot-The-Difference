@@ -53,6 +53,7 @@ namespace Spot_The_Difference
             circle = 2,
             circlePos = 3
         };
+
         private TextBlock[] boxes;
         private Label[] lbls;
         private Ellipse[] circles;
@@ -71,8 +72,6 @@ namespace Spot_The_Difference
         private int numWrong;
    
         private Random rand;
-
-
 
         public MainWindow()
         {
@@ -100,9 +99,7 @@ namespace Spot_The_Difference
             };
 
             words = new List<KeyValuePair<string, string>>();
-    
 
-            
             brushCount = brushes.Length;
             numRight = 0;
             numWrong = 0;
@@ -220,7 +217,6 @@ namespace Spot_The_Difference
                     circles[x].Fill = brushes[wrongCircleColor];
                 }
             }
-
         }
 
 
@@ -325,7 +321,6 @@ namespace Spot_The_Difference
                     }
                     break;
             }
-
             currentMatchType = rand.Next(4);
             updateGameTypeLbl();
         }
@@ -344,8 +339,6 @@ namespace Spot_The_Difference
 
         private void Box2_MouseDown(object sender, MouseButtonEventArgs e)
         {
-
-
             checkAnswer(1);
             randomizeBoxes();
             randomizeWords();
@@ -353,7 +346,6 @@ namespace Spot_The_Difference
             randomizeCirclePos();
 
             updateDebug();
-
         }
 
         private void Box3_MouseDown(object sender, MouseButtonEventArgs e)
@@ -365,12 +357,10 @@ namespace Spot_The_Difference
             randomizeCirclePos();
 
             updateDebug();
-
         }
 
         private void Box4_MouseDown(object sender, MouseButtonEventArgs e)
         {
-
             checkAnswer(3);
             randomizeBoxes();
             randomizeWords();
@@ -378,7 +368,6 @@ namespace Spot_The_Difference
             randomizeCirclePos();
 
             updateDebug();
-
         }
     }
 }
