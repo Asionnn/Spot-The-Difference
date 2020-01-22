@@ -45,23 +45,28 @@ namespace Spot_The_Difference
         };
 
         private List<KeyValuePair<string, string>> words;
+        
         private enum matchType
         {
             color = 0,
             word = 1,
-            circle = 2
+            circle = 2,
+            circlePos = 3
         };
         private TextBlock[] boxes;
         private Label[] lbls;
-
+        private Ellipse[] circles;
+        
         private int brushCount;
-        private int correctBox;
-        private int correctBoxColor;
-        private int wrongBoxesColor;
         private int currentMatchType;
+        private int correctColor;
+        private int correctColorBox;
+        private int wrongColor;
         private int correctWordBox;
         private int correctWord;
-        private int wrongWord;
+        private int correctCircleColorBox;
+        private int correctCircleColor;
+        private int correctCirclePosBox;
         private int numRight;
         private int numWrong;
    
@@ -86,8 +91,17 @@ namespace Spot_The_Difference
                 lbl3,
                 lbl4
             };
+            circles = new Ellipse[]
+            {
+                box1_circle,
+                box2_circle,
+                box3_circle,
+                box4_circle
+            };
 
             words = new List<KeyValuePair<string, string>>();
+    
+
             
             brushCount = brushes.Length;
             numRight = 0;
@@ -95,15 +109,19 @@ namespace Spot_The_Difference
 
             rand = new Random();
 
-            currentMatchType = rand.Next(3);
+            currentMatchType = rand.Next(4);
+
             populateWords();
             randomizeWords();
             randomizeBoxes();
             randomizeWords();
+            randomizeCircleColors();
+            randomizeCirclePos();
+            updateGameTypeLbl();
             updateDebug();
         }
 
-        public void populateWords()
+        private void populateWords()
         {
             words.Add(new KeyValuePair<string, string>("Bring", "Brink"));
             words.Add(new KeyValuePair<string, string>("Late", "Mate"));
@@ -126,7 +144,25 @@ namespace Spot_The_Difference
             words.Add(new KeyValuePair<string, string>("From", "Form"));
             words.Add(new KeyValuePair<string, string>("Wish", "Fish"));
         }
-
+ 
+        private void updateGameTypeLbl()
+        {
+            switch (currentMatchType)
+            {
+                case (int)(matchType.color):
+                    gameIndicator.Content = "Color";
+                    break;
+                case (int)(matchType.word):
+                    gameIndicator.Content = "Word";
+                    break;
+                case (int)(matchType.circle):
+                    gameIndicator.Content = "Circle Color";
+                    break;
+                case (int)(matchType.circlePos):
+                    gameIndicator.Content = "Circle Position";
+                    break;
+            }
+        }
         private void randomizeWords()
         {
             int wordCount = words.Count();
@@ -144,52 +180,112 @@ namespace Spot_The_Difference
                     lbls[x].Content = wordArr[correctWord].Value;
                 }
             }
-
         }
 
         private void randomizeBoxes()
         {
-            correctBox = rand.Next(4);
-            correctBoxColor = rand.Next(brushCount); 
+            correctColorBox = rand.Next(4);
+            correctColor= rand.Next(brushCount); 
 
-            boxes[correctBox].Background = brushes[correctBoxColor];
+            boxes[correctColorBox].Background = brushes[correctColor];
 
-            while ((wrongBoxesColor = rand.Next(brushCount)) == correctBoxColor) ;
+            while ((wrongColor = rand.Next(brushCount)) == correctColor) ;
 
             for (int x = 0; x < 4; x++)
             {
-                if (correctBox != x)
+                if (correctColorBox != x)
                 {
-                    boxes[x].Background = brushes[wrongBoxesColor];
+                    boxes[x].Background = brushes[wrongColor];
+                }
+            }
+        }
+
+        private void randomizeCircleColors()
+        {
+            correctCircleColorBox = rand.Next(4);
+            var wrongCircleColor = rand.Next(brushCount);
+
+            while ((correctCircleColor = rand.Next(brushCount)) == correctColor) ;
+            while(wrongCircleColor == correctColor || wrongCircleColor == correctCircleColor || wrongCircleColor == wrongColor)
+            {
+                wrongCircleColor = rand.Next(brushCount);
+            }
+
+            circles[correctCircleColorBox].Fill = brushes[correctCircleColor];
+
+            for(int x = 0; x < 4; x++)
+            {
+                if(correctCircleColorBox != x)
+                {
+                    circles[x].Fill = brushes[wrongCircleColor];
                 }
             }
 
         }
 
-        public void updateDebug()
+
+        private void setCirclePos(Ellipse c, int x, int y)
         {
-            var current = "";
-            switch (currentMatchType)
+            Canvas.SetLeft(c, x);
+            Canvas.SetTop(c, y);
+        }
+        private void randomizeCirclePos()
+        {
+            correctCirclePosBox = rand.Next(4);
+
+            var correctCirclePos_x = rand.Next(189, 439);
+            var correctCirclePos_y = rand.Next(156, 334);
+            int wrongCirclePos_x;
+            int wrongCirclePos_y;
+
+            while ((wrongCirclePos_x = rand.Next(189, 439)) == correctCirclePos_x) ;
+            while ((wrongCirclePos_y = rand.Next(156, 334)) == correctCirclePos_y) ;
+
+            if (correctCirclePosBox == 1)
             {
-                case 0:
-                    current = "color";
-                        break;
-                case 1:
-                    current = "word";
-                    break;
-                case 2:
-                    current = "circle";
-                    break;
+                correctCirclePos_x += 597;
             }
-            debug.Text = "Right: " + numRight + "\n" + "Wrong: " + numWrong + "\n" + "Type: " + current;
+            if(correctCirclePosBox == 2)
+            {
+                correctCirclePos_y += 396;
+            }
+            if(correctCirclePosBox == 3)
+            {
+                correctCirclePos_x += 597;
+                correctCirclePos_y += 396;
+            }
+
+            setCirclePos(circles[correctCirclePosBox], correctCirclePos_x, correctCirclePos_y);
+
+            if(correctCirclePosBox != 0)
+            {
+                setCirclePos(box1_circle, wrongCirclePos_x, wrongCirclePos_y);
+            }
+            if(correctCirclePosBox != 1)
+            {
+                setCirclePos(box2_circle, wrongCirclePos_x + 597, wrongCirclePos_y);
+            }
+            if(correctCirclePosBox != 2)
+            {
+                setCirclePos(box3_circle, wrongCirclePos_x, wrongCirclePos_y + 396);
+            }
+            if(correctCirclePosBox != 3)
+            {
+                setCirclePos(box4_circle, wrongCirclePos_x + 597, wrongCirclePos_y + 396);
+            }
         }
 
-        public void checkAnswer(int box)
+        private void updateDebug()
+        {
+            debug.Text = "Right: " + numRight + "\n" + "Wrong: " + numWrong;
+        }
+
+        private void checkAnswer(int box)
         {
             switch (currentMatchType)
             {
                 case (int)(matchType.color):
-                    if (correctBox == box)
+                    if (correctColorBox == box)
                     {
                         numRight++;
                     }
@@ -209,10 +305,29 @@ namespace Spot_The_Difference
                     }
                     break;
                 case (int)(matchType.circle):
+                    if(correctCircleColorBox == box)
+                    {
+                        numRight++;
+                    }
+                    else
+                    {
+                        numWrong++;
+                    }
+                    break;
+                case (int)(matchType.circlePos):
+                    if(correctCirclePosBox == box)
+                    {
+                        numRight++;
+                    }
+                    else
+                    {
+                        numWrong++;
+                    }
                     break;
             }
 
-            currentMatchType = rand.Next(3);
+            currentMatchType = rand.Next(4);
+            updateGameTypeLbl();
         }
 
         private void Box1_MouseDown(object sender, MouseButtonEventArgs e)
@@ -220,6 +335,9 @@ namespace Spot_The_Difference
             checkAnswer(0);
             randomizeBoxes();
             randomizeWords();
+            randomizeCircleColors();
+            randomizeCirclePos();
+
             updateDebug();
        
         }
@@ -231,6 +349,9 @@ namespace Spot_The_Difference
             checkAnswer(1);
             randomizeBoxes();
             randomizeWords();
+            randomizeCircleColors();
+            randomizeCirclePos();
+
             updateDebug();
 
         }
@@ -240,6 +361,9 @@ namespace Spot_The_Difference
             checkAnswer(2);
             randomizeBoxes();
             randomizeWords();
+            randomizeCircleColors();
+            randomizeCirclePos();
+
             updateDebug();
 
         }
@@ -250,6 +374,9 @@ namespace Spot_The_Difference
             checkAnswer(3);
             randomizeBoxes();
             randomizeWords();
+            randomizeCircleColors();
+            randomizeCirclePos();
+
             updateDebug();
 
         }
