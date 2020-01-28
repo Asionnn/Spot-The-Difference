@@ -1,0 +1,51 @@
+Time: Monday, 27 January 2020 19:42:08
+Accuracy: 45.16%
+# Correct: 14
+# Wrong: 17
+Total: 31
+Trials: 
+{
+	0: ( background-color, True, 1.24s )
+	1: ( word, True, 3.23s )
+	2: ( circle-color, False, 4.06s )
+	3: ( background-color, True, 1.96s )
+	4: ( background-color, True, 1.5s )
+	5: ( word, True, 0.43s )
+	6: ( background-color, False, 0.48s )
+	7: ( word, False, 0.37s )
+	8: ( circle-color, False, 1.34s )
+	9: ( word, False, 0.78s )
+	10: ( background-color, True, 0.64s )
+	11: ( word, False, 1.3s )
+	12: ( word, False, 0.53s )
+	13: ( background-color, True, 0.8s )
+	14: ( background-color, True, 2.21s )
+	15: ( circle-color, True, 2.34s )
+	16: ( word, True, 0.7s )
+	17: ( circle-color, True, 1.67s )
+	18: ( background-color, False, 0.9s )
+	19: ( word, False, 1.66s )
+	20: ( background-color, False, 0.96s )
+	21: ( circle-color, False, 2.7s )
+	22: ( circle-pos, False, 2.29s )
+	23: ( circle-color, False, 0.66s )
+	24: ( circle-pos, False, 0.72s )
+	25: ( background-color, False, 1.4s )
+	26: ( word, True, 1.03s )
+	27: ( word, True, 1.43s )
+	28: ( circle-pos, True, 1.05s )
+	29: ( circle-pos, False, 1.37s )
+	30: ( background-color, False, 0.84s )
+}
+====================================================================================================
+
+Time: Monday, 27 January 2020 19:42:43
+Accuracy: NaN%
+# Correct: 0
+# Wrong: 0
+Total: 0
+Trials: 
+{
+}
+====================================================================================================
+

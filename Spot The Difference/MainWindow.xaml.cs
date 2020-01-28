@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -70,9 +72,15 @@ namespace Spot_The_Difference
         private int correctCirclePosBox;
         private int numRight;
         private int numWrong;
+
+        private bool correct;
+
+        private Stopwatch sw;
    
         private Random rand;
 
+        private ArrayList times;
+        private ArrayList matches;
         public MainWindow()
         {
             InitializeComponent();
@@ -103,7 +111,9 @@ namespace Spot_The_Difference
             brushCount = brushes.Length;
             numRight = 0;
             numWrong = 0;
+            correct = false;
 
+            sw = new Stopwatch();
             rand = new Random();
 
             currentMatchType = rand.Next(4);
@@ -111,11 +121,15 @@ namespace Spot_The_Difference
             populateWords();
             randomizeWords();
             randomizeBoxes();
-            randomizeWords();
             randomizeCircleColors();
             randomizeCirclePos();
             updateGameTypeLbl();
             updateDebug();
+
+            times = new ArrayList();
+            matches = new ArrayList();
+
+            sw.Start();
         }
 
         private void populateWords()
@@ -147,13 +161,13 @@ namespace Spot_The_Difference
             switch (currentMatchType)
             {
                 case (int)(matchType.color):
-                    gameIndicator.Content = "Color";
+                    gameIndicator.Content = "BackGround-Color";
                     break;
                 case (int)(matchType.word):
                     gameIndicator.Content = "Word";
                     break;
                 case (int)(matchType.circle):
-                    gameIndicator.Content = "Circle Color";
+                    gameIndicator.Content = "Circle-Color";
                     break;
                 case (int)(matchType.circlePos):
                     gameIndicator.Content = "Circle Position";
@@ -181,7 +195,7 @@ namespace Spot_The_Difference
 
         private void randomizeBoxes()
         {
-            correctColorBox = rand.Next(4);
+            while ((correctColorBox = rand.Next(4)) == correctWordBox) ;
             correctColor= rand.Next(brushCount); 
 
             boxes[correctColorBox].Background = brushes[correctColor];
@@ -199,7 +213,12 @@ namespace Spot_The_Difference
 
         private void randomizeCircleColors()
         {
+            
             correctCircleColorBox = rand.Next(4);
+            while (correctCircleColorBox == correctColorBox || correctCircleColorBox == correctWordBox)
+            {
+                correctCircleColorBox = rand.Next(4);
+            }
             var wrongCircleColor = rand.Next(brushCount);
 
             while ((correctCircleColor = rand.Next(brushCount)) == correctColor) ;
@@ -228,27 +247,31 @@ namespace Spot_The_Difference
         private void randomizeCirclePos()
         {
             correctCirclePosBox = rand.Next(4);
+            while (correctCirclePosBox == correctColorBox || correctCirclePosBox == correctWordBox || correctCirclePosBox == correctCircleColorBox)
+            {
+                correctCirclePosBox = rand.Next(4);
+            }
 
-            var correctCirclePos_x = rand.Next(189, 439);
-            var correctCirclePos_y = rand.Next(156, 334);
+            var correctCirclePos_x = rand.Next(89, 171);
+            var correctCirclePos_y = rand.Next(97, 149);
             int wrongCirclePos_x;
             int wrongCirclePos_y;
 
-            while ((wrongCirclePos_x = rand.Next(189, 439)) == correctCirclePos_x) ;
-            while ((wrongCirclePos_y = rand.Next(156, 334)) == correctCirclePos_y) ;
+            while ((wrongCirclePos_x = rand.Next(89, 164)) == correctCirclePos_x) ;
+            while ((wrongCirclePos_y = rand.Next(97, 152)) == correctCirclePos_y) ;
 
             if (correctCirclePosBox == 1)
             {
-                correctCirclePos_x += 597;
+                correctCirclePos_x += 175;
             }
             if(correctCirclePosBox == 2)
             {
-                correctCirclePos_y += 396;
+                correctCirclePos_y += 128;
             }
             if(correctCirclePosBox == 3)
             {
-                correctCirclePos_x += 597;
-                correctCirclePos_y += 396;
+                correctCirclePos_x += 175;
+                correctCirclePos_y += 128;
             }
 
             setCirclePos(circles[correctCirclePosBox], correctCirclePos_x, correctCirclePos_y);
@@ -259,15 +282,15 @@ namespace Spot_The_Difference
             }
             if(correctCirclePosBox != 1)
             {
-                setCirclePos(box2_circle, wrongCirclePos_x + 597, wrongCirclePos_y);
+                setCirclePos(box2_circle, wrongCirclePos_x + 175, wrongCirclePos_y);
             }
             if(correctCirclePosBox != 2)
             {
-                setCirclePos(box3_circle, wrongCirclePos_x, wrongCirclePos_y + 396);
+                setCirclePos(box3_circle, wrongCirclePos_x, wrongCirclePos_y + 128);
             }
             if(correctCirclePosBox != 3)
             {
-                setCirclePos(box4_circle, wrongCirclePos_x + 597, wrongCirclePos_y + 396);
+                setCirclePos(box4_circle, wrongCirclePos_x + 175, wrongCirclePos_y + 128);
             }
         }
 
@@ -278,96 +301,133 @@ namespace Spot_The_Difference
 
         private void checkAnswer(int box)
         {
-            switch (currentMatchType)
+            sw.Stop();
+            TimeSpan ts = sw.Elapsed;
+
+            if (ts.TotalMilliseconds < 6000)
             {
-                case (int)(matchType.color):
-                    if (correctColorBox == box)
-                    {
-                        numRight++;
-                    }
-                    else
-                    {
-                        numWrong++;
-                    }
-                    break;
-                case (int)(matchType.word):
-                    if (correctWordBox == box)
-                    {
-                        numRight++;
-                    }
-                    else
-                    {
-                        numWrong++;
-                    }
-                    break;
-                case (int)(matchType.circle):
-                    if(correctCircleColorBox == box)
-                    {
-                        numRight++;
-                    }
-                    else
-                    {
-                        numWrong++;
-                    }
-                    break;
-                case (int)(matchType.circlePos):
-                    if(correctCirclePosBox == box)
-                    {
-                        numRight++;
-                    }
-                    else
-                    {
-                        numWrong++;
-                    }
-                    break;
+                switch (currentMatchType)
+                {
+                    case (int)(matchType.color):
+                        if (correctColorBox == box)
+                        {
+                            numRight++;
+                            correct = true;
+                        }
+                        else
+                        {
+                            numWrong++;
+                            correct = false;
+                        }
+                        break;
+                    case (int)(matchType.word):
+                        if (correctWordBox == box)
+                        {
+                            numRight++;
+                            correct = true;
+                        }
+                        else
+                        {
+                            numWrong++;
+                            correct = false;
+                        }
+                        break;
+                    case (int)(matchType.circle):
+                        if (correctCircleColorBox == box)
+                        {
+                            numRight++;
+                            correct = true;
+                        }
+                        else
+                        {
+                            numWrong++;
+                            correct = false;
+                        }
+                        break;
+                    case (int)(matchType.circlePos):
+                        if (correctCirclePosBox == box)
+                        {
+                            numRight++;
+                            correct = true;
+                        }
+                        else
+                        {
+                            numWrong++;
+                            correct = false;
+                        }
+                        break;
+                }
+
+                matches.Add(new MatchItem(currentMatchType, correct, Math.Round(ts.TotalMilliseconds / 1000.0, 2)));
             }
             currentMatchType = rand.Next(4);
             updateGameTypeLbl();
+
+            sw.Reset();
+            sw.Start();
         }
 
         private void Box1_MouseDown(object sender, MouseButtonEventArgs e)
         {
+
             checkAnswer(0);
-            randomizeBoxes();
             randomizeWords();
+            randomizeBoxes();
             randomizeCircleColors();
             randomizeCirclePos();
-
             updateDebug();
-       
         }
 
         private void Box2_MouseDown(object sender, MouseButtonEventArgs e)
         {
             checkAnswer(1);
-            randomizeBoxes();
             randomizeWords();
+            randomizeBoxes();
             randomizeCircleColors();
             randomizeCirclePos();
-
             updateDebug();
         }
 
         private void Box3_MouseDown(object sender, MouseButtonEventArgs e)
-        { 
+        {
             checkAnswer(2);
-            randomizeBoxes();
             randomizeWords();
+            randomizeBoxes();
             randomizeCircleColors();
             randomizeCirclePos();
-
             updateDebug();
         }
 
         private void Box4_MouseDown(object sender, MouseButtonEventArgs e)
         {
             checkAnswer(3);
-            randomizeBoxes();
             randomizeWords();
+            randomizeBoxes();
             randomizeCircleColors();
             randomizeCirclePos();
-
             updateDebug();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string time = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss");
+            var fileName = @"C:\Users\minisim\source\repos\Spot-The-Difference\data\DifferenceData.txt";
+
+            var data = "Time: " + time + Environment.NewLine
+                     + "Accuracy: " + Math.Round(((double)numRight / (numRight + numWrong)) * 100, 2) + "%" + Environment.NewLine
+                     + "# Correct: " + numRight + Environment.NewLine
+                     + "# Wrong: " + numWrong + Environment.NewLine
+                     + "Total: " + (numRight + numWrong) + Environment.NewLine
+                     + "Trials: " + Environment.NewLine + "{" + Environment.NewLine;
+
+            for(int x = 0; x < matches.Count; x++)
+            {
+                data += "\t" +  x.ToString() + ": " + matches[x].ToString() + Environment.NewLine;
+            }
+
+            data += "}" + Environment.NewLine;
+            data += "====================================================================================================" + Environment.NewLine + Environment.NewLine;
+            System.IO.File.AppendAllText(fileName, data);
         }
     }
 }
