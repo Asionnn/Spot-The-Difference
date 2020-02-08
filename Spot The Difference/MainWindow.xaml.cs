@@ -73,6 +73,8 @@ namespace Spot_The_Difference
         private int numRight;
         private int numWrong;
 
+        private Stats stats;
+
         private bool correct;
 
         private Stopwatch sw;
@@ -81,6 +83,8 @@ namespace Spot_The_Difference
 
         private ArrayList times;
         private ArrayList matches;
+
+        private double totalTime;
         public MainWindow()
         {
             InitializeComponent();
@@ -113,6 +117,10 @@ namespace Spot_The_Difference
             numWrong = 0;
             correct = false;
 
+            stats = new Stats();
+
+            totalTime = 0;
+
             sw = new Stopwatch();
             rand = new Random();
 
@@ -126,7 +134,7 @@ namespace Spot_The_Difference
             updateGameTypeLbl();
             updateDebug();
 
-            times = new ArrayList();
+  
             matches = new ArrayList();
 
             sw.Start();
@@ -304,57 +312,71 @@ namespace Spot_The_Difference
             sw.Stop();
             TimeSpan ts = sw.Elapsed;
 
-            if (ts.TotalMilliseconds < 6000)
+            double ms = ts.TotalMilliseconds;
+            if (ms < 6000)
             {
+                totalTime += ms;
                 switch (currentMatchType)
                 {
                     case (int)(matchType.color):
                         if (correctColorBox == box)
                         {
                             numRight++;
+                            stats.bgRight++;
                             correct = true;
                         }
                         else
                         {
                             numWrong++;
+                            stats.bgWrong++;
                             correct = false;
                         }
+                        stats.bgTime += ms;
                         break;
                     case (int)(matchType.word):
                         if (correctWordBox == box)
                         {
                             numRight++;
+                            stats.wordRight++;
                             correct = true;
                         }
                         else
                         {
                             numWrong++;
+                            stats.wordWrong++;
                             correct = false;
                         }
+                        stats.wordTime += ms;
                         break;
                     case (int)(matchType.circle):
                         if (correctCircleColorBox == box)
                         {
                             numRight++;
+                            stats.cColorRight++;
                             correct = true;
                         }
                         else
                         {
                             numWrong++;
+                            stats.cColorWrong++;
                             correct = false;
                         }
+                        stats.cColorTime += ms;
                         break;
                     case (int)(matchType.circlePos):
                         if (correctCirclePosBox == box)
                         {
                             numRight++;
+                            stats.cColorPosRight++;
                             correct = true;
                         }
                         else
                         {
                             numWrong++;
+                            stats.cColorPosWrong++;
                             correct = false;
                         }
+                        stats.cColorPosTime += ms;
                         break;
                 }
 
@@ -369,7 +391,6 @@ namespace Spot_The_Difference
 
         private void Box1_MouseDown(object sender, MouseButtonEventArgs e)
         {
-
             checkAnswer(0);
             randomizeWords();
             randomizeBoxes();
@@ -411,22 +432,43 @@ namespace Spot_The_Difference
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             string time = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss");
-            var fileName = @"C:\Users\minisim\source\repos\Spot-The-Difference\data\DifferenceData.txt";
+            //var fileName = @"C:\Users\minisim\source\repos\Spot-The-Difference\data\DifferenceData.txt";
+            var fileName = "data2.txt";
+            double percentCorrect = Math.Round(((numRight*1.0) / (numRight + numWrong)) * 100, 2);
+            double avgTime = Math.Round((totalTime / (numRight + numWrong))/1000, 2);
 
-            var data = "Time: " + time + Environment.NewLine
-                     + "Accuracy: " + Math.Round(((double)numRight / (numRight + numWrong)) * 100, 2) + "%" + Environment.NewLine
-                     + "# Correct: " + numRight + Environment.NewLine
-                     + "# Wrong: " + numWrong + Environment.NewLine
-                     + "Total: " + (numRight + numWrong) + Environment.NewLine
-                     + "Trials: " + Environment.NewLine + "{" + Environment.NewLine;
+            //[#Trials, %Correct, Total Time, Avg reaction time]
 
-            for(int x = 0; x < matches.Count; x++)
-            {
-                data += "\t" +  x.ToString() + ": " + matches[x].ToString() + Environment.NewLine;
-            }
+            string StringLiteral =
+@" 
+Overall                         bg-color                         word                              circle-color                        circle-pos
+[ {0}, {1}%, {2}, {3}s ]        [ {4}, {5}%, {6}, {7}s ]         [ {8}, {9}%, {10}, {11}s ]        [ {12}, {13}%, {14}, {15}s ]        [ {16}, {17}%, {18}, {19}s ]
 
-            data += "}" + Environment.NewLine;
-            data += "====================================================================================================" + Environment.NewLine + Environment.NewLine;
+";
+
+            var data = string.Format(StringLiteral,
+                numWrong + numRight,
+                percentCorrect, Math.Round(totalTime / 1000, 2),
+                Math.Round(totalTime / 1000, 2),
+                avgTime,
+                (stats.bgRight + stats.bgWrong),
+                stats.getbgAccuracy(),
+                Math.Round(stats.bgTime / 1000, 2),
+                Math.Round((stats.bgTime / (stats.bgRight + stats.bgWrong)) / 1000, 2),
+                (stats.wordRight + stats.wordWrong),
+                stats.getwordAccuracy(),
+                Math.Round(stats.wordTime / 1000, 2),
+                Math.Round((stats.wordTime / (stats.wordRight + stats.wordWrong)) / 1000, 2),
+                (stats.cColorRight + stats.cColorWrong),
+                stats.getccolorAccuracy(),
+                Math.Round(stats.cColorTime / 1000, 2),
+                Math.Round((stats.cColorTime / (stats.cColorRight + stats.cColorWrong)) / 1000, 2),
+                (stats.cColorPosRight + stats.cColorPosWrong),
+                stats.getccolorposAccuracy(),
+                Math.Round(stats.cColorPosTime / 1000, 2),
+                Math.Round((stats.cColorPosTime / (stats.cColorPosRight + stats.cColorPosWrong)) / 1000, 2)
+                );
+
             System.IO.File.AppendAllText(fileName, data);
         }
     }
