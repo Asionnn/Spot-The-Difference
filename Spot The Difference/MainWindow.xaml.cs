@@ -431,44 +431,34 @@ namespace Spot_The_Difference
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            string time = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss");
-            //var fileName = @"C:\Users\minisim\source\repos\Spot-The-Difference\data\DifferenceData.txt";
-            var fileName = "data2.txt";
+            string time = DateTime.Now.ToString("dd MMMM yyyy HH:mm:ss");
+            var fileName = @"C:\Users\minisim\source\repos\Spot-The-Difference\data\GameData.txt";
+            //var fileName = "data2.txt";
             double percentCorrect = Math.Round(((numRight*1.0) / (numRight + numWrong)) * 100, 2);
             double avgTime = Math.Round((totalTime / (numRight + numWrong))/1000, 2);
 
             //[#Trials, %Correct, Total Time, Avg reaction time]
 
             string StringLiteral =
-@" 
-Overall                         bg-color                         word                              circle-color                        circle-pos
-[ {0}, {1}%, {2}, {3}s ]        [ {4}, {5}%, {6}, {7}s ]         [ {8}, {9}%, {10}, {11}s ]        [ {12}, {13}%, {14}, {15}s ]        [ {16}, {17}%, {18}, {19}s ]
-
+@"{0,-35}{1,-41}{2,-35}{3,-35}{4,-35}{5,-35}
+{6,-35}{7,-41}{8,-35}{9,-35}{10,-35}{11,-35}
+============================================================================================================================================================================================================================
 ";
-
             var data = string.Format(StringLiteral,
-                numWrong + numRight,
-                percentCorrect, Math.Round(totalTime / 1000, 2),
-                Math.Round(totalTime / 1000, 2),
-                avgTime,
-                (stats.bgRight + stats.bgWrong),
-                stats.getbgAccuracy(),
-                Math.Round(stats.bgTime / 1000, 2),
-                Math.Round((stats.bgTime / (stats.bgRight + stats.bgWrong)) / 1000, 2),
-                (stats.wordRight + stats.wordWrong),
-                stats.getwordAccuracy(),
-                Math.Round(stats.wordTime / 1000, 2),
-                Math.Round((stats.wordTime / (stats.wordRight + stats.wordWrong)) / 1000, 2),
-                (stats.cColorRight + stats.cColorWrong),
-                stats.getccolorAccuracy(),
-                Math.Round(stats.cColorTime / 1000, 2),
-                Math.Round((stats.cColorTime / (stats.cColorRight + stats.cColorWrong)) / 1000, 2),
-                (stats.cColorPosRight + stats.cColorPosWrong),
-                stats.getccolorposAccuracy(),
-                Math.Round(stats.cColorPosTime / 1000, 2),
-                Math.Round((stats.cColorPosTime / (stats.cColorPosRight + stats.cColorPosWrong)) / 1000, 2)
+                "Date",
+                "Overall",
+                "bg-color",
+                "word",
+                "circle-color",
+                "circle-pos",
+                time,
+                "[ " + (numWrong + numRight) + ", " + percentCorrect + "%, " + Math.Round(totalTime / 1000, 2) + "s, " + avgTime + "s" + " ]",
+                "[ " + (stats.bgRight + stats.bgWrong) + ", " + stats.getbgAccuracy() + "%, " + Math.Round(stats.bgTime / 1000, 2) + "s, " + Math.Round((stats.bgTime / (stats.bgRight + stats.bgWrong)) / 1000, 2) + "s" + " ]",
+                "[ " + (stats.wordRight + stats.wordWrong) + ", " + stats.getwordAccuracy() + "%, " + Math.Round(stats.wordTime / 1000, 2) + "s, " + Math.Round((stats.wordTime / (stats.wordRight + stats.wordWrong)) / 1000, 2) + "s" + " ]",
+                "[ " + (stats.cColorRight + stats.cColorWrong) + ", " + stats.getccolorAccuracy() + "%, " + Math.Round(stats.cColorTime / 1000, 2) + "s, " + Math.Round((stats.cColorTime / (stats.cColorRight + stats.cColorWrong)) / 1000, 2) + "s" + " ]",
+                "[ " + (stats.cColorPosRight + stats.cColorPosWrong) + ", " + stats.getccolorposAccuracy() + "%, " + Math.Round(stats.cColorPosTime / 1000, 2) + "s, " + Math.Round((stats.cColorPosTime / (stats.cColorPosRight + stats.cColorPosWrong)) / 1000, 2) + "s" + " ]"
                 );
-
+            
             System.IO.File.AppendAllText(fileName, data);
         }
     }
